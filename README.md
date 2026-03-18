@@ -1,4 +1,4 @@
-# 📝 To-Do App (MERN + Docker)
+# 📝 To-Do App (MERN + Docker+ci/cd+ aws ec2)
 
 A full-stack To-Do application built using the **MERN stack** (MongoDB, Express, React, Node.js) and containerized using **Docker**.
 
