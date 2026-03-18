@@ -1,5 +1,5 @@
 # Use official Node image
-FROM node:20
+FROM node:20-alpine AS build
 
 # Set working directory
 WORKDIR /to-do-app
