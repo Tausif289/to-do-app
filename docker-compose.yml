@@ -5,8 +5,8 @@ services:
     image: tausifansar/todo-backend:latest
     ports:
       - "5000:5000"
-    environment:
-      - MONGO_URI=${MONGO_URI}
+    env_file:
+      - .env
     restart: always
 
   frontend:

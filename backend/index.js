@@ -7,7 +7,9 @@ const cors = require("cors");
 const todoRoutes = require("./routes/todoRoutes");
 const connectDB=require('./config/connectTodb')
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "http://54.226.117.5:5173"
+}));
 app.use(express.json());
 const PORT = 5000;
 
