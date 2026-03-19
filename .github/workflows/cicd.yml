@@ -37,23 +37,28 @@ jobs:
     needs: build           # Only run after build succeeds
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Stop old containers safely
-      - name: Stop old containers
-        run: docker-compose down --remove-orphans || true
+    # 🔥 CREATE .env FILE (VERY IMPORTANT)
+    - name: Create .env file
+      run: |
+        echo "MONGO_URI=${{ secrets.MONGO_URI }}" > .env
 
-      # Pull latest images from Docker Hub
-      - name: Pull latest images
-        run: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/todo-backend
-          docker pull ${{ secrets.DOCKER_USERNAME }}/todo-frontend
+    # Stop old containers safely
+    - name: Stop old containers
+      run: docker-compose down --remove-orphans || true
 
-      # Start containers
-      - name: Start containers
-        run: docker-compose up -d
+    # Pull latest images
+    - name: Pull latest images
+      run: |
+        docker pull ${{ secrets.DOCKER_USERNAME }}/todo-backend
+        docker pull ${{ secrets.DOCKER_USERNAME }}/todo-frontend
 
-      # Optional cleanup dangling images
-      - name: Cleanup dangling images
-        run: docker image prune -f
+    # Start containers
+    - name: Start containers
+      run: docker-compose up -d
+
+    # Cleanup
+    - name: Cleanup dangling images
+      run: docker image prune -f
