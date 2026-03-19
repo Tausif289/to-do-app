@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   backend:
     image: tausifansar/todo-backend:latest
@@ -5,8 +7,7 @@ services:
       - "5000:5000"
     environment:
       - MONGO_URI=${MONGO_URI}
-    depends_on:
-      - mongo
+    restart: always
 
   frontend:
     image: tausifansar/todo-frontend:latest
@@ -14,13 +15,4 @@ services:
       - "5173:80"
     depends_on:
       - backend
-
-  mongo:
-    image: mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-
-volumes:
-  mongo-data:
+    restart: always
