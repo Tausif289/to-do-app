@@ -6,45 +6,54 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-    runs-on: self-hosted   # your EC2 runner
+  build:
+    runs-on: ubuntu-latest 
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 🐳 Login to Docker Hub
+      # Docker Hub login
       - name: Docker Login
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      # 🔨 Build Backend Image
+      # Build backend image
       - name: Build Backend Image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-backend ./backend
 
-      # 🔨 Build Frontend Image
+      # Build frontend image
       - name: Build Frontend Image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-frontend ./frontend
 
-      # 🚀 Push Backend Image
+      # Push images
       - name: Push Backend Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/todo-backend
 
-      # 🚀 Push Frontend Image
       - name: Push Frontend Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/todo-frontend
 
-      # 🛑 Stop old containers
+  deploy:
+    runs-on: self-hosted   # Your EC2 runner
+    needs: build           # Only run after build succeeds
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Stop old containers safely
       - name: Stop old containers
-        run: docker-compose down || true
+        run: docker-compose down --remove-orphans || true
 
-      # 📥 Pull latest images
+      # Pull latest images from Docker Hub
       - name: Pull latest images
-        run: docker-compose pull
+        run: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/todo-backend
+          docker pull ${{ secrets.DOCKER_USERNAME }}/todo-frontend
 
-      # ▶️ Start containers
+      # Start containers
       - name: Start containers
         run: docker-compose up -d
 
-      # 🧹 Cleanup
-      - name: Cleanup
-        run: docker system prune -f
+      # Optional cleanup dangling images
+      - name: Cleanup dangling images
+        run: docker image prune -f

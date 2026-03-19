@@ -1,15 +1,15 @@
 services:
   backend:
-    build: ./backend
+    image: tausifansar/todo-backend:latest
     ports:
       - "5000:5000"
-    env_file:
-      - ./backend/.env
+    environment:
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
     depends_on:
       - mongo
 
   frontend:
-    build: ./frontend
+    image: tausifansar/todo-frontend:latest
     ports:
       - "5173:80"
     depends_on:
