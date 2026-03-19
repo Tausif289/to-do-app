@@ -1,19 +1,15 @@
-const mongoose = require('mongoose')
+import mongoose  from 'mongoose'
 
-const connectDB = async () => {
-  try {
-    const password = process.env.MONGODB_PASSWORD
+const connectToDatabase = async () => {
+    try {
+        const uri = process.env.MONGODB_URI|| "mongodb://localhost:27017/mydatabase"; // Replace with your MongoDB URI
+        await mongoose.connect(uri);
+        console.log(uri);
+        console.log("Connected to MongoDB successfully!");
+    } catch (error) {
+        console.error("Error connecting to MongoDB:", error);
+        process.exit(1); // Exit the process with a failure code
+    }
+};
 
-    const uri = `mongodb+srv://tausifansar84_db_user:${password}@devcluster.rpntc.mongodb.net/userdb?retryWrites=true&w=majority`
-
-    const conn = await mongoose.connect(uri)
-
-    console.log(`MongoDB Connected: ${conn.connection.host}`)
-  } catch (error) {
-    console.error('MongoDB connection failed ❌')
-    console.error(error.message)
-    process.exit(1)
-  }
-}
-
-module.exports = connectDB
+export default connectToDatabase;
